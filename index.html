@@ -13,422 +13,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://unpkg.com/xlsx@latest/dist/xlsx.full.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: #fafafa;
-            color: #2c3e50;
-        }
-
-        .app-container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-            border-bottom: 3px solid #FF5722;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.08);
-        }
-
-        header h1 {
-            font-size: 24px;
-            margin-bottom: 16px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .header-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-        }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 14px;
-            border-radius: 10px;
-            text-align: center;
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-label {
-            font-size: 11px;
-            opacity: 0.95;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .tabs {
-            display: flex;
-            background: white;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 0;
-            overflow-x: auto;
-        }
-
-        .tabs::-webkit-scrollbar { display: none; }
-
-        .tab {
-            flex: 0 0 auto;
-            padding: 14px 12px;
-            text-align: center;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-size: 12px;
-            font-weight: 500;
-            color: #95a5a6;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #fafafa; color: #2c3e50; }
+        .app-container { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); border-bottom: 3px solid #FF5722; padding: 20px; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.08); }
+        header h1 { font-size: 18px; margin-bottom: 16px; font-weight: 700; color: #ffffff; }
+        .header-month { font-size: 14px; opacity: 0.9; margin-bottom: 10px; color: #ffffff; }
+        .header-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+        .stat-box { background: rgba(255, 255, 255, 0.2); padding: 14px; border-radius: 10px; text-align: center; color: white; }
+        .stat-label { font-size: 11px; opacity: 0.95; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; color: #ffffff; }
+        .stat-value { font-size: 18px; font-weight: 700; color: #ffffff; }
+        .tabs { display: flex; background: white; border-bottom: 1px solid #f0f0f0; padding: 0; overflow-x: auto; }
+        .tab { flex: 0 0 auto; padding: 14px 12px; text-align: center; cursor: pointer; border-bottom: 3px solid transparent; font-size: 12px; font-weight: 500; color: #95a5a6; transition: all 0.3s; white-space: nowrap; }
         .tab:hover { color: #FF6B35; }
-        .tab.active {
-            color: #FF6B35;
-            border-bottom-color: #FF6B35;
-        }
-
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            display: none;
-        }
-
+        .tab.active { color: #FF6B35; border-bottom-color: #FF6B35; }
+        .content { flex: 1; overflow-y: auto; padding: 16px; display: none; }
         .content.active { display: block; }
-
-        .month-selector {
-            background: #f8f8f8;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .month-selector input {
-            max-width: 200px;
-            padding: 8px;
-            border: 1.5px solid #e8e8e8;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .filter-section {
-            background: #f8f8f8;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 16px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 8px 14px;
-            border: 1.5px solid #f0f0f0;
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            color: #7f8c8d;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active {
-            background: #FF6B35;
-            color: white;
-            border-color: #FF6B35;
-        }
-
-        .transaction-form {
-            background: #f8f8f8;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 13px;
-            color: #2c3e50;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 11px;
-            border: 1.5px solid #e8e8e8;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            background: white;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #FF6B35;
-            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        button {
-            background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
-        }
-
-        .chart-container {
-            background: #f8f8f8;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .chart-title {
-            font-weight: 700;
-            margin-bottom: 16px;
-            font-size: 15px;
-            color: #2c3e50;
-        }
-
-        .chart-canvas {
-            position: relative;
-            height: 280px;
-            margin-bottom: 12px;
-        }
-
-        .transactions-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .transaction-item {
-            background: white;
-            border-left: 4px solid #FF6B35;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .transaction-item:hover {
-            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.1);
-        }
-
-        .transaction-info {
-            flex: 1;
-        }
-
-        .transaction-description {
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 4px;
-            color: #2c3e50;
-        }
-
-        .transaction-meta {
-            font-size: 12px;
-            color: #95a5a6;
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-            font-size: 16px;
-            text-align: right;
-            min-width: 80px;
-            color: #FF6B35;
-        }
-
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-left: 8px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #95a5a6;
-            font-size: 14px;
-        }
-
-        .stat-card {
-            background: #f8f8f8;
-            border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #e8e8e8;
-        }
-
+        .chart-container { background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+        .chart-title { font-weight: 700; margin-bottom: 16px; font-size: 15px; color: #2c3e50; }
+        .chart-canvas { position: relative; height: 280px; }
+        .stat-card { background: #f8f8f8; border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e8e8e8; }
         .stat-row:last-child { border-bottom: none; }
-
-        .stat-label {
-            color: #7f8c8d;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .stat-value {
-            font-weight: 700;
-            font-size: 14px;
-            color: #FF6B35;
-        }
-
-        .month-card {
-            background: white;
-            border: 2px solid #FF6B35;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .month-header {
-            font-size: 16px;
-            font-weight: 700;
-            color: #FF6B35;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #FF6B35;
-        }
-
-        .export-btn {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            margin-bottom: 16px;
-        }
-
-        .reset-btn {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            font-size: 12px;
-            padding: 8px;
-        }
-
-        .savings-highlight {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .savings-amount {
-            font-size: 32px;
-            font-weight: 700;
-            margin: 10px 0;
-        }
-
-        .savings-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .progress-bar {
-            background: rgba(0,0,0,0.2);
-            height: 8px;
-            border-radius: 10px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: #fff;
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s;
-        }
-
-        .savings-item {
-            background: white;
-            border-left: 4px solid #27ae60;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .savings-month {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .savings-amount-item {
-            font-weight: 700;
-            font-size: 16px;
-            color: #27ae60;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body { background: #1a1a1a; }
-            .app-container { background: #2a2a2a; }
-            input, select, .chart-container, .transaction-form, .stat-card, .filter-section, .month-selector, .month-card {
-                background: #333;
-                border-color: #444;
-                color: #ecf0f1;
-            }
-            .transaction-item { background: #333; color: #ecf0f1; }
-        }
+        .stat-label { color: #7f8c8d; font-size: 13px; font-weight: 500; }
+        .stat-value { font-weight: 700; font-size: 14px; color: #FF6B35; }
+        .transaction-form { background: #f8f8f8; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #2c3e50; }
+        input, select { width: 100%; padding: 11px; border: 1.5px solid #e8e8e8; border-radius: 8px; font-size: 14px; font-family: inherit; background: white; }
+        input:focus, select:focus { outline: none; border-color: #FF6B35; box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        button { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3); }
+        .transaction-item { background: white; border-left: 4px solid #FF6B35; border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 10px; }
+        .transaction-item:hover { box-shadow: 0 4px 12px rgba(255, 107, 53, 0.1); }
+        .transaction-description { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #2c3e50; }
+        .transaction-meta { font-size: 12px; color: #95a5a6; }
+        .transaction-amount { font-weight: 700; font-size: 16px; text-align: right; min-width: 80px; color: #FF6B35; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; margin-left: 8px; }
+        .export-btn { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); margin-bottom: 16px; }
+        .reset-btn { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); font-size: 12px; padding: 8px; margin-bottom: 16px; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #95a5a6; font-size: 14px; }
+        .month-selector { background: #f8f8f8; border-radius: 10px; padding: 12px; margin-bottom: 16px; text-align: center; }
     </style>
 </head>
 <body>
@@ -445,7 +71,7 @@
                     <div class="stat-value" id="headerExpense">$0</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">Ahorro</div>
+                    <div class="stat-label">Balance</div>
                     <div class="stat-value" id="headerBalance">$0</div>
                 </div>
             </div>
@@ -459,45 +85,32 @@
             <div class="tab" data-tab="history">📋 Historial</div>
         </div>
 
-        <!-- DASHBOARD -->
         <div class="content active" id="dashboard">
-            <div class="filter-section">
-                <button class="filter-btn active" data-filter="month">Este mes</button>
-                <button class="filter-btn" data-filter="year">Este año</button>
-                <button class="filter-btn" data-filter="all">Todo</button>
-            </div>
-
             <div class="chart-container">
                 <div class="chart-title">📊 Gastos por Categoría</div>
-                <div class="chart-canvas">
-                    <canvas id="categoryChart" width="400" height="280"></canvas>
-                </div>
+                <div class="chart-canvas"><canvas id="categoryChart" width="400" height="280"></canvas></div>
             </div>
-
             <div class="stat-card">
-                <div class="chart-title">Resumen del Período</div>
+                <div class="chart-title">Resumen del Mes</div>
                 <div id="summaryStats"></div>
             </div>
         </div>
 
-        <!-- MESES -->
         <div class="content" id="months">
             <div class="month-selector">
                 <label style="margin-bottom: 8px; font-size: 13px;">Selecciona un mes:</label><br>
-                <input type="month" id="monthSelector" onchange="renderMonthView()">
+                <input type="month" id="monthSelector" onchange="updateToMonth()">
             </div>
-
             <div id="monthContent"></div>
         </div>
 
-        <!-- AHORRO -->
         <div class="content" id="savings">
-            <div class="savings-highlight">
-                <div class="savings-label">Ahorro Estimado Este Mes</div>
-                <div class="savings-amount" id="savingsThisMonth">$0</div>
-                <div class="savings-label" id="savingsPercent">0% de ingresos</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">Ahorro del Mes Actual</div>
+                <div style="font-size: 32px; font-weight: 700; margin: 10px 0;" id="currentMonthSavings">$0</div>
+                <div style="font-size: 13px; opacity: 0.9;" id="savingsPercent">0% de ingresos</div>
+                <div style="background: rgba(0,0,0,0.2); height: 8px; border-radius: 10px; margin-top: 10px; overflow: hidden;">
+                    <div id="progressFill" style="background: #fff; height: 100%; border-radius: 10px; width: 0%; transition: width 0.3s;"></div>
                 </div>
             </div>
 
@@ -506,17 +119,14 @@
                     <label>Mes</label>
                     <input type="month" id="savingsMonth" required>
                 </div>
-
                 <div class="form-group">
                     <label>Monto Ahorrado</label>
                     <input type="number" id="savingsAmount" step="0.01" placeholder="0.00" required>
                 </div>
-
                 <div class="form-group">
                     <label>Descripción (opcional)</label>
-                    <input type="text" id="savingsDescription" placeholder="Ej: Inversión, Fondo de emergencia">
+                    <input type="text" id="savingsDescription" placeholder="Ej: Inversión, Fondo emergencia">
                 </div>
-
                 <button type="submit">💾 Guardar Ahorro</button>
             </form>
 
@@ -526,7 +136,6 @@
             </div>
         </div>
 
-        <!-- AGREGAR TRANSACCIÓN -->
         <div class="content" id="add">
             <form class="transaction-form" id="transactionForm">
                 <div class="form-group">
@@ -536,26 +145,22 @@
                         <option value="income">💵 Ingreso</option>
                     </select>
                 </div>
-
                 <div class="form-group" id="categoryGroup">
                     <label>Categoría</label>
                     <select id="category" required>
                         <option value="Comida">🍽️ Comida</option>
                         <option value="Gastos comunes">🏠 Gastos comunes</option>
-                        <option value="Luz">💡 Luz</option>
+                        <option value="Transporte">🚗 Transporte</option>
                         <option value="Gym">🏋️ Gym</option>
                         <option value="Portoseguro">🛡️ Portoseguro</option>
                         <option value="Comidas afuera">🍴 Comidas afuera</option>
-                        <option value="Transporte">🚗 Transporte</option>
                         <option value="Libre">🆓 Libre</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>Descripción</label>
                     <input type="text" id="description" placeholder="Ej: Almuerzo" required>
                 </div>
-
                 <div class="form-row">
                     <div class="form-group">
                         <label>Monto</label>
@@ -566,15 +171,13 @@
                         <input type="date" id="date" required>
                     </div>
                 </div>
-
                 <button type="submit">💾 Guardar</button>
             </form>
         </div>
 
-        <!-- HISTORIAL -->
         <div class="content" id="history">
             <button class="export-btn" onclick="exportToExcel()">📥 Exportar a Excel</button>
-            <button class="reset-btn" onclick="resetData()">🔄 Resetear Datos</button>
+            <button class="reset-btn" onclick="resetAllData()">🔄 Resetear TODO</button>
             <div id="transactionsList"></div>
         </div>
     </div>
@@ -584,17 +187,12 @@
             navigator.serviceWorker.register('/mis-finanzas/sw.js').catch(() => {});
         }
 
-        document.getElementById('date').valueAsDate = new Date();
-        document.getElementById('monthSelector').value = '2026-05';
-        document.getElementById('savingsMonth').value = '2026-05';
-
         let transactions = [];
         let savings = [];
-        let currentFilter = 'month';
+        let currentMonth = '2026-05';
         let categoryChart = null;
 
-        // DATOS DE MAYO 2026 (este mes)
-        const datosMayo = [
+        const mayoData = [
             {fecha: "2026-05-01", categoria: "Ingreso", descripcion: "Entrada", monto: 39849, tipo: "income"},
             {fecha: "2026-05-01", categoria: "Comida", descripcion: "Comida sinergia", monto: 181, tipo: "expense"},
             {fecha: "2026-05-02", categoria: "Comida", descripcion: "Pan queso gomitas", monto: 281, tipo: "expense"},
@@ -634,39 +232,70 @@
             {fecha: "2026-05-31", categoria: "Comida", descripcion: "Varios", monto: 62, tipo: "expense"}
         ];
 
-        function loadMayoData() {
-            transactions = [];
-            datosMayo.forEach(d => {
-                transactions.push({
-                    id: Date.now() + Math.random(),
-                    type: d.tipo,
-                    category: d.categoria,
-                    description: d.descripcion,
-                    amount: d.monto,
-                    date: d.fecha
-                });
-            });
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            savings = JSON.parse(localStorage.getItem('savings')) || [];
-            updateAllTotals();
-            renderDashboard();
-            renderSavingsList();
+        function initApp() {
+            transactions = mayoData.map((d, i) => ({
+                id: i,
+                type: d.tipo,
+                category: d.categoria,
+                description: d.descripcion,
+                amount: parseFloat(d.monto),
+                date: d.fecha
+            }));
+            
+            const savedNewTransactions = localStorage.getItem('newTransactions');
+            if (savedNewTransactions) {
+                try {
+                    const newTrans = JSON.parse(savedNewTransactions);
+                    transactions = transactions.concat(newTrans);
+                } catch(e) {}
+            }
+            
+            savings = localStorage.getItem('savings') ? JSON.parse(localStorage.getItem('savings')) : [];
+            
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('monthSelector').value = '2026-05';
+            document.getElementById('savingsMonth').value = '2026-05';
+            currentMonth = '2026-05';
+            updateHeaderAndDashboard();
         }
 
-        function resetData() {
-            if (confirm('¿Resetear TODO? Se cargarán los datos de Mayo nuevamente.')) {
-                localStorage.clear();
-                loadMayoData();
+        function updateToMonth() {
+            currentMonth = document.getElementById('monthSelector').value;
+            updateHeaderAndDashboard();
+            renderMonthView();
+        }
+
+        function getMonthName(monthStr) {
+            const [year, month] = monthStr.split('-');
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            return monthNames[parseInt(month) - 1] + ' ' + year;
+        }
+
+        function updateHeaderAndDashboard() {
+            const monthTransactions = transactions.filter(t => t.date.startsWith(currentMonth));
+            
+            const income = monthTransactions.filter(t => t.type === 'income').reduce((s, t) => s + (t.amount || 0), 0);
+            const expense = monthTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + (t.amount || 0), 0);
+            
+            document.getElementById('headerIncome').textContent = '$' + Math.round(income);
+            document.getElementById('headerExpense').textContent = '$' + Math.round(expense);
+            document.getElementById('headerBalance').textContent = '$' + Math.round(income - expense);
+            
+            renderDashboard();
+        }
+
+        function resetAllData() {
+            if (confirm('¿Resetear TODO y volver a datos de Mayo?')) {
+                localStorage.removeItem('newTransactions');
+                currentMonth = '2026-05';
+                initApp();
                 renderTransactionsList();
-                alert('✅ Datos reseteados');
+                alert('✅ Datos reseteados a Mayo');
             }
         }
 
-        loadMayoData();
-
         function updateCategories() {
-            document.getElementById('categoryGroup').style.display = 
-                document.getElementById('type').value === 'income' ? 'none' : 'block';
+            document.getElementById('categoryGroup').style.display = document.getElementById('type').value === 'income' ? 'none' : 'block';
         }
 
         document.querySelectorAll('.tab').forEach(tab => {
@@ -676,98 +305,63 @@
                 tab.classList.add('active');
                 const tabId = tab.dataset.tab;
                 document.getElementById(tabId).classList.add('active');
-                
                 if (tabId === 'history') renderTransactionsList();
-                if (tabId === 'dashboard') setTimeout(renderDashboard, 100);
-                if (tabId === 'months') renderMonthView();
-                if (tabId === 'savings') renderSavingsView();
-            });
-        });
-
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                renderDashboard();
+                if (tabId === 'dashboard') setTimeout(() => updateHeaderAndDashboard(), 100);
+                if (tabId === 'months') setTimeout(() => renderMonthView(), 100);
+                if (tabId === 'savings') setTimeout(() => renderSavingsView(), 100);
             });
         });
 
         document.getElementById('transactionForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const type = document.getElementById('type').value;
-            transactions.push({
+            const newTransaction = {
                 id: Date.now(),
                 type: type,
                 category: type === 'income' ? 'Ingreso' : document.getElementById('category').value,
                 description: document.getElementById('description').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 date: document.getElementById('date').value
-            });
-            
-            localStorage.setItem('transactions', JSON.stringify(transactions));
+            };
+            transactions.push(newTransaction);
+            const newTransactions = transactions.slice(mayoData.length);
+            localStorage.setItem('newTransactions', JSON.stringify(newTransactions));
             document.getElementById('transactionForm').reset();
             document.getElementById('date').valueAsDate = new Date();
-            updateAllTotals();
+            updateHeaderAndDashboard();
             alert('✅ Guardado');
         });
 
         document.getElementById('savingsForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            savings.push({
+            const newSaving = {
                 id: Date.now(),
                 month: document.getElementById('savingsMonth').value,
                 amount: parseFloat(document.getElementById('savingsAmount').value),
                 description: document.getElementById('savingsDescription').value
-            });
-            
+            };
+            savings.push(newSaving);
             localStorage.setItem('savings', JSON.stringify(savings));
             document.getElementById('savingsForm').reset();
-            document.getElementById('savingsMonth').value = '2026-05';
-            renderSavingsList();
+            document.getElementById('savingsMonth').value = currentMonth;
             renderSavingsView();
             alert('✅ Ahorro guardado');
         });
 
-        function updateAllTotals() {
-            const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-            const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-            
-            document.getElementById('headerIncome').textContent = '$' + Math.round(income);
-            document.getElementById('headerExpense').textContent = '$' + Math.round(expense);
-            document.getElementById('headerBalance').textContent = '$' + Math.round(income - expense);
-        }
-
-        function getFilteredTransactions() {
-            const now = new Date('2026-05-31'); // Simular que estamos en Mayo 2026
-            return transactions.filter(t => {
-                const tDate = new Date(t.date);
-                switch(currentFilter) {
-                    case 'month':
-                        return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
-                    case 'year':
-                        return tDate.getFullYear() === now.getFullYear();
-                    default:
-                        return true;
-                }
-            });
-        }
-
         function renderDashboard() {
-            const filtered = getFilteredTransactions();
-            const expenses = filtered.filter(t => t.type === 'expense');
+            const monthTransactions = transactions.filter(t => t.date.startsWith(currentMonth));
+            const expenses = monthTransactions.filter(t => t.type === 'expense');
             const categoryTotals = {};
             
             expenses.forEach(t => {
-                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + (t.amount || 0);
             });
-
+            
             const sorted = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
-
+            
             try {
                 const canvas = document.getElementById('categoryChart');
                 if (categoryChart) categoryChart.destroy();
-                
                 const ctx = canvas.getContext('2d');
                 categoryChart = new Chart(ctx, {
                     type: 'doughnut',
@@ -788,14 +382,12 @@
                         }
                     }
                 });
-            } catch(e) {
-                console.log('Error gráfica:', e);
-            }
-
-            const income = filtered.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-            const expense = filtered.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+            } catch(e) {}
+            
+            const income = monthTransactions.filter(t => t.type === 'income').reduce((s, t) => s + (t.amount || 0), 0);
+            const expense = monthTransactions.filter(t => t.type === 'expense').reduce((s, t) => s + (t.amount || 0), 0);
             const savingRate = income > 0 ? ((income - expense) / income * 100).toFixed(1) : 0;
-
+            
             document.getElementById('summaryStats').innerHTML = `
                 <div class="stat-row">
                     <div class="stat-label">Ingresos</div>
@@ -824,22 +416,22 @@
                 document.getElementById('monthContent').innerHTML = '<div class="empty-state">📅 Sin datos este mes</div>';
                 return;
             }
-
-            const income = monthTransactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+            
+            const income = monthTransactions.filter(t => t.type === 'income').reduce((s, t) => s + (t.amount || 0), 0);
             const expenses = monthTransactions.filter(t => t.type === 'expense');
-            const expense = expenses.reduce((s, t) => s + t.amount, 0);
-
+            const expense = expenses.reduce((s, t) => s + (t.amount || 0), 0);
             const categoryTotals = {};
+            
             expenses.forEach(t => {
-                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount;
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + (t.amount || 0);
             });
-
+            
             const sorted = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
             const monthName = new Date(selectedMonth + '-01').toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
-
+            
             let html = `
-                <div class="month-card">
-                    <div class="month-header">${monthName}</div>
+                <div class="stat-card" style="border: 2px solid #FF6B35; margin-bottom: 20px;">
+                    <div style="font-size: 16px; font-weight: 700; color: #FF6B35; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid #FF6B35;">${monthName.charAt(0).toUpperCase() + monthName.slice(1)}</div>
                     <div class="stat-row">
                         <div class="stat-label">📥 Ingresos</div>
                         <div class="stat-value">$${Math.round(income)}</div>
@@ -849,7 +441,7 @@
                         <div class="stat-value">$${Math.round(expense)}</div>
                     </div>
                     <div class="stat-row">
-                        <div class="stat-label">💰 Ahorro</div>
+                        <div class="stat-label">💰 Balance</div>
                         <div class="stat-value">${income >= expense ? '✅' : '⚠️'} $${Math.round(income - expense)}</div>
                     </div>
                     <div class="stat-row">
@@ -857,104 +449,87 @@
                         <div class="stat-value">${income > 0 ? ((income - expense) / income * 100).toFixed(1) : 0}%</div>
                     </div>
                 </div>
-
                 <div class="chart-container">
                     <div class="chart-title">Gastos por Categoría</div>
-                    <div style="font-size: 12px; margin-bottom: 12px;">
-                        ${sorted.map(([cat, amt]) => `<div style="padding: 4px 0;">🔸 <strong>${cat}</strong>: $${Math.round(amt)}</div>`).join('')}
-                    </div>
+                    ${sorted.map(([cat, amt]) => `<div style="padding: 4px 0; font-size: 13px;">🔸 <strong>${cat}</strong>: $${Math.round(amt)}</div>`).join('')}
                 </div>
-
                 <div class="chart-container">
-                    <div class="chart-title">Todas las Transacciones</div>
-                    <div class="transactions-list">
-                        ${monthTransactions.sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `
-                            <div class="transaction-item">
-                                <div class="transaction-info">
-                                    <div class="transaction-description">${t.description}</div>
-                                    <div class="transaction-meta">${t.category} • ${new Date(t.date).toLocaleDateString('es-UY')}</div>
-                                </div>
-                                <div class="transaction-amount">${t.type === 'income' ? '+' : '-'}$${Math.round(t.amount)}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('monthContent').innerHTML = html;
-        }
-
-        function renderSavingsView() {
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const monthSavings = savings.filter(s => s.month === currentMonth);
-            const totalMonthSavings = monthSavings.reduce((sum, s) => sum + s.amount, 0);
-
-            const currentIncome = transactions
-                .filter(t => t.type === 'income' && t.date.startsWith(currentMonth))
-                .reduce((s, t) => s + t.amount, 0);
-
-            const percent = currentIncome > 0 ? ((totalMonthSavings / currentIncome) * 100).toFixed(1) : 0;
-
-            document.getElementById('savingsThisMonth').textContent = '$' + Math.round(totalMonthSavings);
-            document.getElementById('savingsPercent').textContent = percent + '% de ingresos';
-            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
-
-            renderSavingsList();
-        }
-
-        function renderSavingsList() {
-            const sorted = [...savings].sort((a, b) => new Date(b.month) - new Date(a.month));
-            let html = '';
-
-            if (sorted.length === 0) {
-                html = '<div class="empty-state">📊 Sin ahorros registrados</div>';
-            } else {
-                html = sorted.map(s => {
-                    const monthName = new Date(s.month + '-01').toLocaleDateString('es-UY', { month: 'short', year: 'numeric' });
-                    return `
-                        <div class="savings-item">
-                            <div>
-                                <div class="savings-month">${monthName}</div>
-                                <div style="font-size: 12px; color: #7f8c8d;">${s.description || 'Sin descripción'}</div>
-                            </div>
-                            <div class="savings-amount-item">$${Math.round(s.amount)}</div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            document.getElementById('savingsList').innerHTML = html;
-        }
-
-        function renderTransactionsList() {
-            const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
-            let html = '';
-
-            if (sorted.length === 0) {
-                html = '<div class="empty-state">📝 Sin transacciones</div>';
-            } else {
-                html = '<div class="transactions-list">' +
-                    sorted.map(t => `
+                    <div class="chart-title">Transacciones</div>
+                    ${monthTransactions.sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `
                         <div class="transaction-item">
-                            <div class="transaction-info">
+                            <div>
                                 <div class="transaction-description">${t.description}</div>
                                 <div class="transaction-meta">${t.category} • ${new Date(t.date).toLocaleDateString('es-UY')}</div>
                             </div>
                             <div class="transaction-amount">${t.type === 'income' ? '+' : '-'}$${Math.round(t.amount)}</div>
-                            <button class="delete-btn" onclick="deleteTransaction(${t.id})">✕</button>
                         </div>
-                    `).join('') +
-                    '</div>';
-            }
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('monthContent').innerHTML = html;
+        }
 
+        function renderTransactionsList() {
+            const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (sorted.length === 0) {
+                document.getElementById('transactionsList').innerHTML = '<div class="empty-state">📝 Sin transacciones</div>';
+                return;
+            }
+            let html = sorted.map(t => `
+                <div class="transaction-item">
+                    <div>
+                        <div class="transaction-description">${t.description}</div>
+                        <div class="transaction-meta">${t.category} • ${new Date(t.date).toLocaleDateString('es-UY')}</div>
+                    </div>
+                    <div class="transaction-amount">${t.type === 'income' ? '+' : '-'}$${Math.round(t.amount)}</div>
+                    <button class="delete-btn" onclick="deleteTransaction(${t.id})">✕</button>
+                </div>
+            `).join('');
             document.getElementById('transactionsList').innerHTML = html;
+        }
+
+        function renderSavingsView() {
+            const currentMonthSavings = savings.filter(s => s.month === currentMonth).reduce((sum, s) => sum + s.amount, 0);
+            const currentMonthIncome = transactions.filter(t => t.type === 'income' && t.date.startsWith(currentMonth)).reduce((s, t) => s + (t.amount || 0), 0);
+            const percent = currentMonthIncome > 0 ? ((currentMonthSavings / currentMonthIncome) * 100).toFixed(1) : 0;
+            
+            document.getElementById('currentMonthSavings').textContent = '$' + Math.round(currentMonthSavings);
+            document.getElementById('savingsPercent').textContent = percent + '% de ingresos';
+            document.getElementById('progressFill').style.width = Math.min(percent, 100) + '%';
+            
+            renderSavingsList();
+        }
+
+        function renderSavingsList() {
+            const sorted = [...savings].sort((a, b) => new Date(b.month + '-01') - new Date(a.month + '-01'));
+            
+            if (sorted.length === 0) {
+                document.getElementById('savingsList').innerHTML = '<div class="empty-state">📊 Sin ahorros registrados</div>';
+                return;
+            }
+            
+            let html = sorted.map(s => {
+                const monthName = new Date(s.month + '-01').toLocaleDateString('es-UY', { month: 'short', year: 'numeric' });
+                return `
+                    <div class="transaction-item" style="border-left-color: #27ae60;">
+                        <div>
+                            <div class="transaction-description">${monthName}</div>
+                            <div class="transaction-meta">${s.description || 'Sin descripción'}</div>
+                        </div>
+                        <div class="transaction-amount" style="color: #27ae60;">$${Math.round(s.amount)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('savingsList').innerHTML = html;
         }
 
         function deleteTransaction(id) {
             if (confirm('¿Eliminar?')) {
                 transactions = transactions.filter(t => t.id !== id);
-                localStorage.setItem('transactions', JSON.stringify(transactions));
-                updateAllTotals();
+                const newTransactions = transactions.slice(mayoData.length);
+                localStorage.setItem('newTransactions', JSON.stringify(newTransactions));
+                updateHeaderAndDashboard();
                 renderTransactionsList();
             }
         }
@@ -964,7 +539,6 @@
                 alert('Sin transacciones');
                 return;
             }
-
             try {
                 const data = transactions.map(t => ({
                     Fecha: t.date,
@@ -973,7 +547,6 @@
                     Descripción: t.description,
                     Monto: t.amount
                 }));
-
                 const ws = XLSX.utils.json_to_sheet(data);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Transacciones");
@@ -983,8 +556,7 @@
             }
         }
 
-        updateAllTotals();
-        renderDashboard();
+        initApp();
     </script>
 </body>
 </html>
