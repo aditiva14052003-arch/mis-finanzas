@@ -146,15 +146,20 @@
                 </div>
                 <div class="form-group" id="categoryGroup">
                     <label>Categoría</label>
-                    <select id="category" required>
+                    <select id="category" required onchange="updateCategoryInput()">
                         <option value="Comida">🍽️ Comida</option>
-                        <option value="Gastos comunes">🏠 Gastos comunes</option>
+                        <option value="Alquiler">🏠 Alquiler</option>
+                        <option value="Gastos comunes">🏢 Gastos comunes</option>
                         <option value="Transporte">🚗 Transporte</option>
                         <option value="Gym">🏋️ Gym</option>
                         <option value="Portoseguro">🛡️ Portoseguro</option>
                         <option value="Comidas afuera">🍴 Comidas afuera</option>
-                        <option value="Libre">🆓 Libre</option>
+                        <option value="Libre">🆓 Otra</option>
                     </select>
+                </div>
+                <div class="form-group" id="customCategoryGroup" style="display: none;">
+                    <label>Categoría personalizada</label>
+                    <input type="text" id="customCategory" placeholder="Escribe la categoría">
                 </div>
                 <div class="form-group">
                     <label>Descripción</label>
@@ -250,6 +255,18 @@
 
         function updateCategories() {
             document.getElementById('categoryGroup').style.display = document.getElementById('type').value === 'income' ? 'none' : 'block';
+            document.getElementById('customCategoryGroup').style.display = 'none';
+            document.getElementById('customCategory').value = '';
+        }
+
+        function updateCategoryInput() {
+            const category = document.getElementById('category').value;
+            if (category === 'Libre') {
+                document.getElementById('customCategoryGroup').style.display = 'block';
+            } else {
+                document.getElementById('customCategoryGroup').style.display = 'none';
+                document.getElementById('customCategory').value = '';
+            }
         }
 
         document.querySelectorAll('.tab').forEach(tab => {
@@ -269,10 +286,21 @@
         document.getElementById('transactionForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const type = document.getElementById('type').value;
+            
+            let category = document.getElementById('category').value;
+            if (category === 'Libre') {
+                const customCat = document.getElementById('customCategory').value.trim();
+                if (!customCat) {
+                    alert('⚠️ Escribe la categoría personalizada');
+                    return;
+                }
+                category = customCat;
+            }
+            
             const newTransaction = {
                 id: Date.now(),
                 type: type,
-                category: type === 'income' ? 'Ingreso' : document.getElementById('category').value,
+                category: type === 'income' ? 'Ingreso' : category,
                 description: document.getElementById('description').value,
                 amount: parseFloat(document.getElementById('amount').value),
                 date: document.getElementById('date').value
@@ -281,6 +309,7 @@
             localStorage.setItem('transactions', JSON.stringify(transactions));
             document.getElementById('transactionForm').reset();
             document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('customCategoryGroup').style.display = 'none';
             updateHeaderAndDashboard();
             alert('✅ Guardado');
         });
