@@ -17,8 +17,7 @@
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: #fafafa; color: #2c3e50; }
         .app-container { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; }
         header { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); border-bottom: 3px solid #FF5722; padding: 20px; box-shadow: 0 2px 8px rgba(255, 107, 53, 0.08); }
-        header h1 { font-size: 18px; margin-bottom: 16px; font-weight: 700; color: #ffffff; }
-        .header-month { font-size: 14px; opacity: 0.9; margin-bottom: 10px; color: #ffffff; }
+        header h1 { font-size: 24px; margin-bottom: 16px; font-weight: 700; color: #ffffff; }
         .header-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
         .stat-box { background: rgba(255, 255, 255, 0.2); padding: 14px; border-radius: 10px; text-align: center; color: white; }
         .stat-label { font-size: 11px; opacity: 0.95; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; color: #ffffff; }
@@ -177,7 +176,7 @@
 
         <div class="content" id="history">
             <button class="export-btn" onclick="exportToExcel()">📥 Exportar a Excel</button>
-            <button class="reset-btn" onclick="resetAllData()">🔄 Resetear TODO</button>
+            <button class="reset-btn" onclick="resetAllData()">🔄 Limpiar TODO</button>
             <div id="transactionsList"></div>
         </div>
     </div>
@@ -189,73 +188,30 @@
 
         let transactions = [];
         let savings = [];
-        let currentMonth = '2026-05';
+        let currentMonth = new Date().toISOString().slice(0, 7);
         let categoryChart = null;
 
-        const mayoData = [
-            {fecha: "2026-05-01", categoria: "Ingreso", descripcion: "Entrada", monto: 39849, tipo: "income"},
-            {fecha: "2026-05-01", categoria: "Comida", descripcion: "Comida sinergia", monto: 181, tipo: "expense"},
-            {fecha: "2026-05-02", categoria: "Comida", descripcion: "Pan queso gomitas", monto: 281, tipo: "expense"},
-            {fecha: "2026-05-02", categoria: "Transporte", descripcion: "Taxi", monto: 150, tipo: "expense"},
-            {fecha: "2026-05-03", categoria: "Comida", descripcion: "Galletas", monto: 80, tipo: "expense"},
-            {fecha: "2026-05-05", categoria: "Gastos comunes", descripcion: "Alquiler", monto: 12500, tipo: "expense"},
-            {fecha: "2026-05-06", categoria: "Libre", descripcion: "Regalo mamá", monto: 849, tipo: "expense"},
-            {fecha: "2026-05-07", categoria: "Comida", descripcion: "Huevos y tomate", monto: 336, tipo: "expense"},
-            {fecha: "2026-05-08", categoria: "Comida", descripcion: "Comida", monto: 443, tipo: "expense"},
-            {fecha: "2026-05-09", categoria: "Comida", descripcion: "Coca papas", monto: 255, tipo: "expense"},
-            {fecha: "2026-05-10", categoria: "Comida", descripcion: "Monster", monto: 260, tipo: "expense"},
-            {fecha: "2026-05-12", categoria: "Gym", descripcion: "Gym Porto", monto: 2000, tipo: "expense"},
-            {fecha: "2026-05-13", categoria: "Libre", descripcion: "Desodorante/tampones", monto: 716, tipo: "expense"},
-            {fecha: "2026-05-14", categoria: "Libre", descripcion: "Test embarazo", monto: 284, tipo: "expense"},
-            {fecha: "2026-05-15", categoria: "Comida", descripcion: "Envio peya", monto: 60, tipo: "expense"},
-            {fecha: "2026-05-16", categoria: "Transporte", descripcion: "Boletos", monto: 580, tipo: "expense"},
-            {fecha: "2026-05-17", categoria: "Comida", descripcion: "Pan", monto: 133, tipo: "expense"},
-            {fecha: "2026-05-18", categoria: "Transporte", descripcion: "Boletos", monto: 580, tipo: "expense"},
-            {fecha: "2026-05-19", categoria: "Comida", descripcion: "Comida", monto: 650, tipo: "expense"},
-            {fecha: "2026-05-20", categoria: "Libre", descripcion: "No se", monto: 832, tipo: "expense"},
-            {fecha: "2026-05-21", categoria: "Libre", descripcion: "Tampones", monto: 250, tipo: "expense"},
-            {fecha: "2026-05-22", categoria: "Comida", descripcion: "Tata", monto: 421, tipo: "expense"},
-            {fecha: "2026-05-23", categoria: "Libre", descripcion: "Franco", monto: 1120, tipo: "expense"},
-            {fecha: "2026-05-24", categoria: "Comida", descripcion: "Compras", monto: 250, tipo: "expense"},
-            {fecha: "2026-05-25", categoria: "Comida", descripcion: "Súper", monto: 211, tipo: "expense"},
-            {fecha: "2026-05-26", categoria: "Portoseguro", descripcion: "Anticonceptivas", monto: 471, tipo: "expense"},
-            {fecha: "2026-05-27", categoria: "Comidas afuera", descripcion: "Pizza brothers", monto: 141, tipo: "expense"},
-            {fecha: "2026-05-28", categoria: "Comida", descripcion: "Yerba", monto: 230, tipo: "expense"},
-            {fecha: "2026-05-28", categoria: "Comida", descripcion: "Tuco y bolsa agua", monto: 619, tipo: "expense"},
-            {fecha: "2026-05-29", categoria: "Libre", descripcion: "Papel y gillette", monto: 277, tipo: "expense"},
-            {fecha: "2026-05-30", categoria: "Libre", descripcion: "Papel madreselva", monto: 100, tipo: "expense"},
-            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Comidita joaco", monto: 1639, tipo: "expense"},
-            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Queso rallado", monto: 67, tipo: "expense"},
-            {fecha: "2026-05-31", categoria: "Gastos comunes", descripcion: "GC (servicios)", monto: 4829, tipo: "expense"},
-            {fecha: "2026-05-31", categoria: "Comidas afuera", descripcion: "Almuerzo disco", monto: 162, tipo: "expense"},
-            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Merienda", monto: 130, tipo: "expense"},
-            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Varios", monto: 62, tipo: "expense"}
-        ];
+        function getMonthName(monthStr) {
+            const [year, month] = monthStr.split('-');
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            return monthNames[parseInt(month) - 1] + ' ' + year;
+        }
 
         function initApp() {
-            transactions = mayoData.map((d, i) => ({
-                id: i,
-                type: d.tipo,
-                category: d.categoria,
-                description: d.descripcion,
-                amount: parseFloat(d.monto),
-                date: d.fecha
-            }));
+            transactions = [];
             
-            const savedNewTransactions = localStorage.getItem('newTransactions');
-            if (savedNewTransactions) {
+            const savedTransactions = localStorage.getItem('transactions');
+            if (savedTransactions) {
                 try {
-                    const newTrans = JSON.parse(savedNewTransactions);
-                    transactions = transactions.concat(newTrans);
+                    transactions = JSON.parse(savedTransactions);
                 } catch(e) {}
             }
             
             savings = localStorage.getItem('savings') ? JSON.parse(localStorage.getItem('savings')) : [];
             
             document.getElementById('date').valueAsDate = new Date();
-            document.getElementById('monthSelector').value = '2026-05';
-            document.getElementById('savingsMonth').value = '2026-05';
-            currentMonth = '2026-05';
+            document.getElementById('monthSelector').value = currentMonth;
+            document.getElementById('savingsMonth').value = currentMonth;
             updateHeaderAndDashboard();
         }
 
@@ -263,12 +219,6 @@
             currentMonth = document.getElementById('monthSelector').value;
             updateHeaderAndDashboard();
             renderMonthView();
-        }
-
-        function getMonthName(monthStr) {
-            const [year, month] = monthStr.split('-');
-            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            return monthNames[parseInt(month) - 1] + ' ' + year;
         }
 
         function updateHeaderAndDashboard() {
@@ -285,12 +235,16 @@
         }
 
         function resetAllData() {
-            if (confirm('¿Resetear TODO y volver a datos de Mayo?')) {
-                localStorage.removeItem('newTransactions');
-                currentMonth = '2026-05';
+            if (confirm('¿Limpiar TODOS los datos?')) {
+                localStorage.clear();
+                transactions = [];
+                savings = [];
+                currentMonth = new Date().toISOString().slice(0, 7);
+                document.getElementById('monthSelector').value = currentMonth;
+                document.getElementById('savingsMonth').value = currentMonth;
                 initApp();
                 renderTransactionsList();
-                alert('✅ Datos reseteados a Mayo');
+                alert('✅ Datos eliminados');
             }
         }
 
@@ -324,8 +278,7 @@
                 date: document.getElementById('date').value
             };
             transactions.push(newTransaction);
-            const newTransactions = transactions.slice(mayoData.length);
-            localStorage.setItem('newTransactions', JSON.stringify(newTransactions));
+            localStorage.setItem('transactions', JSON.stringify(transactions));
             document.getElementById('transactionForm').reset();
             document.getElementById('date').valueAsDate = new Date();
             updateHeaderAndDashboard();
@@ -427,11 +380,11 @@
             });
             
             const sorted = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
-            const monthName = new Date(selectedMonth + '-01').toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
+            const monthName = getMonthName(selectedMonth);
             
             let html = `
                 <div class="stat-card" style="border: 2px solid #FF6B35; margin-bottom: 20px;">
-                    <div style="font-size: 16px; font-weight: 700; color: #FF6B35; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid #FF6B35;">${monthName.charAt(0).toUpperCase() + monthName.slice(1)}</div>
+                    <div style="font-size: 16px; font-weight: 700; color: #FF6B35; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 2px solid #FF6B35;">${monthName}</div>
                     <div class="stat-row">
                         <div class="stat-label">📥 Ingresos</div>
                         <div class="stat-value">$${Math.round(income)}</div>
@@ -451,7 +404,7 @@
                 </div>
                 <div class="chart-container">
                     <div class="chart-title">Gastos por Categoría</div>
-                    ${sorted.map(([cat, amt]) => `<div style="padding: 4px 0; font-size: 13px;">🔸 <strong>${cat}</strong>: $${Math.round(amt)}</div>`).join('')}
+                    ${sorted.length === 0 ? '<div class="empty-state">Sin gastos</div>' : sorted.map(([cat, amt]) => `<div style="padding: 4px 0; font-size: 13px;">🔸 <strong>${cat}</strong>: $${Math.round(amt)}</div>`).join('')}
                 </div>
                 <div class="chart-container">
                     <div class="chart-title">Transacciones</div>
@@ -467,25 +420,6 @@
                 </div>
             `;
             document.getElementById('monthContent').innerHTML = html;
-        }
-
-        function renderTransactionsList() {
-            const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
-            if (sorted.length === 0) {
-                document.getElementById('transactionsList').innerHTML = '<div class="empty-state">📝 Sin transacciones</div>';
-                return;
-            }
-            let html = sorted.map(t => `
-                <div class="transaction-item">
-                    <div>
-                        <div class="transaction-description">${t.description}</div>
-                        <div class="transaction-meta">${t.category} • ${new Date(t.date).toLocaleDateString('es-UY')}</div>
-                    </div>
-                    <div class="transaction-amount">${t.type === 'income' ? '+' : '-'}$${Math.round(t.amount)}</div>
-                    <button class="delete-btn" onclick="deleteTransaction(${t.id})">✕</button>
-                </div>
-            `).join('');
-            document.getElementById('transactionsList').innerHTML = html;
         }
 
         function renderSavingsView() {
@@ -509,7 +443,7 @@
             }
             
             let html = sorted.map(s => {
-                const monthName = new Date(s.month + '-01').toLocaleDateString('es-UY', { month: 'short', year: 'numeric' });
+                const monthName = getMonthName(s.month);
                 return `
                     <div class="transaction-item" style="border-left-color: #27ae60;">
                         <div>
@@ -524,11 +458,29 @@
             document.getElementById('savingsList').innerHTML = html;
         }
 
+        function renderTransactionsList() {
+            const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (sorted.length === 0) {
+                document.getElementById('transactionsList').innerHTML = '<div class="empty-state">📝 Sin transacciones</div>';
+                return;
+            }
+            let html = sorted.map(t => `
+                <div class="transaction-item">
+                    <div>
+                        <div class="transaction-description">${t.description}</div>
+                        <div class="transaction-meta">${t.category} • ${new Date(t.date).toLocaleDateString('es-UY')}</div>
+                    </div>
+                    <div class="transaction-amount">${t.type === 'income' ? '+' : '-'}$${Math.round(t.amount)}</div>
+                    <button class="delete-btn" onclick="deleteTransaction(${t.id})">✕</button>
+                </div>
+            `).join('');
+            document.getElementById('transactionsList').innerHTML = html;
+        }
+
         function deleteTransaction(id) {
             if (confirm('¿Eliminar?')) {
                 transactions = transactions.filter(t => t.id !== id);
-                const newTransactions = transactions.slice(mayoData.length);
-                localStorage.setItem('newTransactions', JSON.stringify(newTransactions));
+                localStorage.setItem('transactions', JSON.stringify(transactions));
                 updateHeaderAndDashboard();
                 renderTransactionsList();
             }
