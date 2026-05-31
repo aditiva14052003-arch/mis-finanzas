@@ -368,7 +368,6 @@
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 20px;
-            text-align: center;
         }
 
         .savings-amount {
@@ -586,53 +585,53 @@
         }
 
         document.getElementById('date').valueAsDate = new Date();
-        document.getElementById('monthSelector').value = new Date().toISOString().slice(0, 7);
-        document.getElementById('savingsMonth').value = new Date().toISOString().slice(0, 7);
+        document.getElementById('monthSelector').value = '2026-05';
+        document.getElementById('savingsMonth').value = '2026-05';
 
         let transactions = [];
         let savings = [];
         let currentFilter = 'month';
         let categoryChart = null;
 
-        // DATOS DE MAYO
+        // DATOS DE MAYO 2026 (este mes)
         const datosMayo = [
-            {fecha: "2025-05-01", categoria: "Ingreso", descripcion: "Entrada", monto: 39849, tipo: "income"},
-            {fecha: "2025-05-01", categoria: "Comida", descripcion: "Comida sinergia", monto: 181, tipo: "expense"},
-            {fecha: "2025-05-02", categoria: "Comida", descripcion: "Pan queso gomitas", monto: 281, tipo: "expense"},
-            {fecha: "2025-05-02", categoria: "Transporte", descripcion: "Taxi", monto: 150, tipo: "expense"},
-            {fecha: "2025-05-03", categoria: "Comida", descripcion: "Galletas", monto: 80, tipo: "expense"},
-            {fecha: "2025-05-05", categoria: "Gastos comunes", descripcion: "Alquiler", monto: 12500, tipo: "expense"},
-            {fecha: "2025-05-06", categoria: "Libre", descripcion: "Regalo mamá", monto: 849, tipo: "expense"},
-            {fecha: "2025-05-07", categoria: "Comida", descripcion: "Huevos y tomate", monto: 336, tipo: "expense"},
-            {fecha: "2025-05-08", categoria: "Comida", descripcion: "Comida", monto: 443, tipo: "expense"},
-            {fecha: "2025-05-09", categoria: "Comida", descripcion: "Coca papas", monto: 255, tipo: "expense"},
-            {fecha: "2025-05-10", categoria: "Comida", descripcion: "Monster", monto: 260, tipo: "expense"},
-            {fecha: "2025-05-12", categoria: "Gym", descripcion: "Gym Porto", monto: 2000, tipo: "expense"},
-            {fecha: "2025-05-13", categoria: "Libre", descripcion: "Desodorante/tampones", monto: 716, tipo: "expense"},
-            {fecha: "2025-05-14", categoria: "Libre", descripcion: "Test embarazo", monto: 284, tipo: "expense"},
-            {fecha: "2025-05-15", categoria: "Comida", descripcion: "Envio peya", monto: 60, tipo: "expense"},
-            {fecha: "2025-05-16", categoria: "Transporte", descripcion: "Boletos", monto: 580, tipo: "expense"},
-            {fecha: "2025-05-17", categoria: "Comida", descripcion: "Pan", monto: 133, tipo: "expense"},
-            {fecha: "2025-05-18", categoria: "Transporte", descripcion: "Boletos", monto: 580, tipo: "expense"},
-            {fecha: "2025-05-19", categoria: "Comida", descripcion: "Comida", monto: 650, tipo: "expense"},
-            {fecha: "2025-05-20", categoria: "Libre", descripcion: "No se", monto: 832, tipo: "expense"},
-            {fecha: "2025-05-21", categoria: "Libre", descripcion: "Tampones", monto: 250, tipo: "expense"},
-            {fecha: "2025-05-22", categoria: "Comida", descripcion: "Tata", monto: 421, tipo: "expense"},
-            {fecha: "2025-05-23", categoria: "Libre", descripcion: "Franco", monto: 1120, tipo: "expense"},
-            {fecha: "2025-05-24", categoria: "Comida", descripcion: "Compras", monto: 250, tipo: "expense"},
-            {fecha: "2025-05-25", categoria: "Comida", descripcion: "Súper", monto: 211, tipo: "expense"},
-            {fecha: "2025-05-26", categoria: "Portoseguro", descripcion: "Anticonceptivas", monto: 471, tipo: "expense"},
-            {fecha: "2025-05-27", categoria: "Comidas afuera", descripcion: "Pizza brothers", monto: 141, tipo: "expense"},
-            {fecha: "2025-05-28", categoria: "Comida", descripcion: "Yerba", monto: 230, tipo: "expense"},
-            {fecha: "2025-05-28", categoria: "Comida", descripcion: "Tuco y bolsa agua", monto: 619, tipo: "expense"},
-            {fecha: "2025-05-29", categoria: "Libre", descripcion: "Papel y gillette", monto: 277, tipo: "expense"},
-            {fecha: "2025-05-30", categoria: "Libre", descripcion: "Papel madreselva", monto: 100, tipo: "expense"},
-            {fecha: "2025-05-31", categoria: "Comida", descripcion: "Comidita joaco", monto: 1639, tipo: "expense"},
-            {fecha: "2025-05-31", categoria: "Comida", descripcion: "Queso rallado", monto: 67, tipo: "expense"},
-            {fecha: "2025-05-31", categoria: "Gastos comunes", descripcion: "GC (servicios)", monto: 4829, tipo: "expense"},
-            {fecha: "2025-05-31", categoria: "Comidas afuera", descripcion: "Almuerzo disco", monto: 162, tipo: "expense"},
-            {fecha: "2025-05-31", categoria: "Comida", descripcion: "Merienda", monto: 130, tipo: "expense"},
-            {fecha: "2025-05-31", categoria: "Comida", descripcion: "Varios", monto: 62, tipo: "expense"}
+            {fecha: "2026-05-01", categoria: "Ingreso", descripcion: "Entrada", monto: 39849, tipo: "income"},
+            {fecha: "2026-05-01", categoria: "Comida", descripcion: "Comida sinergia", monto: 181, tipo: "expense"},
+            {fecha: "2026-05-02", categoria: "Comida", descripcion: "Pan queso gomitas", monto: 281, tipo: "expense"},
+            {fecha: "2026-05-02", categoria: "Transporte", descripcion: "Taxi", monto: 150, tipo: "expense"},
+            {fecha: "2026-05-03", categoria: "Comida", descripcion: "Galletas", monto: 80, tipo: "expense"},
+            {fecha: "2026-05-05", categoria: "Gastos comunes", descripcion: "Alquiler", monto: 12500, tipo: "expense"},
+            {fecha: "2026-05-06", categoria: "Libre", descripcion: "Regalo mamá", monto: 849, tipo: "expense"},
+            {fecha: "2026-05-07", categoria: "Comida", descripcion: "Huevos y tomate", monto: 336, tipo: "expense"},
+            {fecha: "2026-05-08", categoria: "Comida", descripcion: "Comida", monto: 443, tipo: "expense"},
+            {fecha: "2026-05-09", categoria: "Comida", descripcion: "Coca papas", monto: 255, tipo: "expense"},
+            {fecha: "2026-05-10", categoria: "Comida", descripcion: "Monster", monto: 260, tipo: "expense"},
+            {fecha: "2026-05-12", categoria: "Gym", descripcion: "Gym Porto", monto: 2000, tipo: "expense"},
+            {fecha: "2026-05-13", categoria: "Libre", descripcion: "Desodorante/tampones", monto: 716, tipo: "expense"},
+            {fecha: "2026-05-14", categoria: "Libre", descripcion: "Test embarazo", monto: 284, tipo: "expense"},
+            {fecha: "2026-05-15", categoria: "Comida", descripcion: "Envio peya", monto: 60, tipo: "expense"},
+            {fecha: "2026-05-16", categoria: "Transporte", descripcion: "Boletos", monto: 580, tipo: "expense"},
+            {fecha: "2026-05-17", categoria: "Comida", descripcion: "Pan", monto: 133, tipo: "expense"},
+            {fecha: "2026-05-18", categoria: "Transporte", descripcion: "Boletos", monto: 580, tipo: "expense"},
+            {fecha: "2026-05-19", categoria: "Comida", descripcion: "Comida", monto: 650, tipo: "expense"},
+            {fecha: "2026-05-20", categoria: "Libre", descripcion: "No se", monto: 832, tipo: "expense"},
+            {fecha: "2026-05-21", categoria: "Libre", descripcion: "Tampones", monto: 250, tipo: "expense"},
+            {fecha: "2026-05-22", categoria: "Comida", descripcion: "Tata", monto: 421, tipo: "expense"},
+            {fecha: "2026-05-23", categoria: "Libre", descripcion: "Franco", monto: 1120, tipo: "expense"},
+            {fecha: "2026-05-24", categoria: "Comida", descripcion: "Compras", monto: 250, tipo: "expense"},
+            {fecha: "2026-05-25", categoria: "Comida", descripcion: "Súper", monto: 211, tipo: "expense"},
+            {fecha: "2026-05-26", categoria: "Portoseguro", descripcion: "Anticonceptivas", monto: 471, tipo: "expense"},
+            {fecha: "2026-05-27", categoria: "Comidas afuera", descripcion: "Pizza brothers", monto: 141, tipo: "expense"},
+            {fecha: "2026-05-28", categoria: "Comida", descripcion: "Yerba", monto: 230, tipo: "expense"},
+            {fecha: "2026-05-28", categoria: "Comida", descripcion: "Tuco y bolsa agua", monto: 619, tipo: "expense"},
+            {fecha: "2026-05-29", categoria: "Libre", descripcion: "Papel y gillette", monto: 277, tipo: "expense"},
+            {fecha: "2026-05-30", categoria: "Libre", descripcion: "Papel madreselva", monto: 100, tipo: "expense"},
+            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Comidita joaco", monto: 1639, tipo: "expense"},
+            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Queso rallado", monto: 67, tipo: "expense"},
+            {fecha: "2026-05-31", categoria: "Gastos comunes", descripcion: "GC (servicios)", monto: 4829, tipo: "expense"},
+            {fecha: "2026-05-31", categoria: "Comidas afuera", descripcion: "Almuerzo disco", monto: 162, tipo: "expense"},
+            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Merienda", monto: 130, tipo: "expense"},
+            {fecha: "2026-05-31", categoria: "Comida", descripcion: "Varios", monto: 62, tipo: "expense"}
         ];
 
         function loadMayoData() {
@@ -724,7 +723,7 @@
             
             localStorage.setItem('savings', JSON.stringify(savings));
             document.getElementById('savingsForm').reset();
-            document.getElementById('savingsMonth').value = new Date().toISOString().slice(0, 7);
+            document.getElementById('savingsMonth').value = '2026-05';
             renderSavingsList();
             renderSavingsView();
             alert('✅ Ahorro guardado');
@@ -740,7 +739,7 @@
         }
 
         function getFilteredTransactions() {
-            const now = new Date();
+            const now = new Date('2026-05-31'); // Simular que estamos en Mayo 2026
             return transactions.filter(t => {
                 const tDate = new Date(t.date);
                 switch(currentFilter) {
